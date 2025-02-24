@@ -1,7 +1,6 @@
 # SRZ-Electric
-
 [WIP] Better description coming soon
-
+started as fivem script
 A simple electric-themed minigame where you connect cables. Currently, it features:
 
 - Randomized cable colors
