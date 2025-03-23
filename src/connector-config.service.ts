@@ -9,7 +9,6 @@ export class ConnectorConfigService {
   private connectorsCountSubject = new BehaviorSubject<number>(8); // Default: 4
   connectorsCount$ = this.connectorsCountSubject.asObservable();
 
-  // Metodo per aggiornare il numero di connettori
   setConnectorsCount(count: number): void {
     if (count >= 3 && count <= 8) {
       this.connectorsCountSubject.next(count);

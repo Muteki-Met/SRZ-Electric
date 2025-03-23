@@ -1,23 +1,50 @@
-import { AfterViewInit, Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, inject, OnDestroy } from '@angular/core';
 import Konva from 'konva';
 import { Subscription } from 'rxjs';
 import { ConnectorConfigService } from '../connector-config.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-electrical-panel',
-  imports: [],
+  imports: [CommonModule],
   template: `
-    <main class="canvas-container">
+    <main
+      class="canvas-container"
+      [ngClass]="{ 'fade-in': imageChanged }"
+      [ngStyle]="{'background-image': 'url(' + backgroundImage + ')'}">
       <section id="konva-container"></section>
+      @if (isOpen) {
+        <img
+          class="door-overlay"
+          src="/electrical-panel-asset/bg_cabinet_door_open.png"
+          alt="Door">
+      }
     </main>
+
   `,
   styles: `
     .canvas-container {
       width: 650px;
       height: 700px;
       position: relative;
-      background-image: url("/electrical-panel-asset/bg_electric.png");
+      background-size: cover;
+      background-position: center;
+      transition: opacity 1s ease-in-out;
     }
+
+    .fade-in {
+      opacity: 0;
+    }
+
+    .door-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
   `
 })
 export class ElectricalPanelComponent implements AfterViewInit, OnDestroy {
@@ -27,10 +54,13 @@ export class ElectricalPanelComponent implements AfterViewInit, OnDestroy {
   activeLine: Konva.Line | null = null;
   connections: { [key: string]: string } = {};
   connectedPairs: Set<string> = new Set();
-  private connectorsCountSub: Subscription | undefined;
+  imageChanged = false;
+  isOpen = false;
+  backgroundImage = '/electrical-panel-asset/bg_cabinet_close.png';
 
-  constructor(private configService: ConnectorConfigService) {
-  }
+  private connectorsCountSub: Subscription | undefined;
+  private readonly _configService = inject(ConnectorConfigService);
+
 
   ngAfterViewInit(): void {
     this.stage = new Konva.Stage({
@@ -42,9 +72,17 @@ export class ElectricalPanelComponent implements AfterViewInit, OnDestroy {
     this.layer = new Konva.Layer();
     this.stage.add(this.layer);
 
-    this.connectorsCountSub = this.configService.connectorsCount$.subscribe((count) => {
-      this.resetConnectors(count);
-    });
+    setTimeout(() => {
+      this.imageChanged = true;
+      setTimeout(() => {
+        this.backgroundImage = '/electrical-panel-asset/bg_cabinet_open.png';
+        this.isOpen = true
+        this.connectorsCountSub = this._configService.connectorsCount$.subscribe((count) => {
+          this.resetConnectors(count);
+        });
+        this.imageChanged = false;
+      }, 1000);
+    }, 1000);
   }
 
   ngOnDestroy(): void {
@@ -106,7 +144,6 @@ export class ElectricalPanelComponent implements AfterViewInit, OnDestroy {
         const colorCode = colors[i % colors.length].replace('#', '');
 
         const bottomImage = new Image();
-        console.log(`connector_b_${colorCode}.png`)
         bottomImage.src = `electrical-panel-asset/connector_b_${colorCode}.png`;
         bottomImage.onload = () => {
           const bottomConnector = new Konva.Image({

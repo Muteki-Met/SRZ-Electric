@@ -44,7 +44,7 @@ export class AppComponent implements OnInit {
       next: (data) => {
         // Sets the visibility based on the environment (browser or not)
         this.visible.set(this._nui.isEnvBrowser() ? true : data.visible!);
-        console.log(`${AppComponent.name} DEBUG-DATA:`, data);
+        console.log(`${AppComponent.name} DEBUG:`, data);
       },
     });
 
