@@ -12,5 +12,5 @@ A simple electric-themed minigame where you connect cables. Currently, it featur
 ![image](https://github.com/user-attachments/assets/5c836d15-c8b3-461a-9436-b1ae69e0ea6a)
 
 
-<img src="https://discord.com/api/guilds/1038549580867960832/widget.png?style=banner2" alt="Discord Banner 2"/>
+![Discord Banner 3](https://discord.com/api/guilds/1038549580867960832/widget.png?style=banner3)
 
